@@ -1,0 +1,8 @@
+<html>
+    <body>
+        {% for i in searching %}
+            <a href="{% url 'searchprofile_full_view' i.pk %}"><p>{{i.first_name}}</p></a>
+        {% endfor %}
+        
+    </body>
+</html>

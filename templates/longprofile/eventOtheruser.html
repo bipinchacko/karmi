@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    {% for i in my_event %}
+        <p>Event name:{{i.name}}</p>
+        <p>author:{{i.user.first_name}}</p>
+        <p>{{i.description}}</p>
+        {% if i in saved_event %}
+        <a href="{% url 'eventSave' i.pk %}" id = "savebtn{{i.id}}"><i id="saveicon{{i.id}}" class="fa fa-star text-warning"  style="font-size: 30px;"></i></a><br>
+        {% else %}
+        <a href="{% url 'eventSave' i.pk %}" id = "savebtn{{i.id}}"><i id="saveicon{{i.id}}" class="fa fa-star-o text-warning"  style="font-size: 30px;"></i></a><br>
+        {% endif %}
+        ----------------------------------------------
+        <script>
+            $("#savebtn{{i.id}}").click(function(e){
+                e.preventDefault();
+                var href = this.href;
+                $.ajax({
+                    url : href,
+                    success : function(response){
+                        console.log(response.is_save)
+                        if(response.is_save === true){
+                            $("#saveicon" + response.save_id).removeClass('fa fa-star-o text-warning');
+                            $("#saveicon" + response.save_id).attr('class', 'fa fa-star text-warning');
+                            
+                            // $("#star").attr('class', 'fa fa-star text-warning');
+                        }
+                        else{
+                            $("#saveicon" + response.save_id).removeClass('fa fa-star text-warning');
+                            $("#saveicon" + response.save_id).attr('class', 'fa fa-star-o text-warning');
+                            
+                            // $("#star").attr('class', 'fa fa-star-o text-warning');
+                        }
+                    }
+                })
+            })
+        </script>
+    {% endfor %}
+    <div>
+        <h2>Saved Event</h2>
+        {% for i in savedEventView %}
+            <p>Name:{{i.event.name}}</p>
+            <p>Author:{{i.event.user.first_name}}</p>
+            <p>{{i.event.description}}</p>
+        {% endfor %}
+    </div>
+    
+</body>
+</html>

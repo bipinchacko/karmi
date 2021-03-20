@@ -1,0 +1,151 @@
+{% load static %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'css/star.css' %}" type="text/css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <p>{{instance.first_name}}</p>
+        <p>{{instance.last_name}}</p>
+        <p>{{instance.email}}</p>
+        <p>{{instance.username }}</p>
+        <p></p>
+        <p></p>
+        <p></p>
+        {% if connection %}
+        <a type="button" class="btn btn-info" id="follow" role="button" href="{% url 'follow' instance.pk %}">Unfollow</a>
+        {% else %}
+        <a type="button" class="btn btn-info" id="follow" role="button" href="{% url 'follow' instance.pk %}">Follow</a>
+        {% endif %}
+        {% if endorse %}
+        <a type="button" class="btn btn-info" id="endorse_btn" role="button" href="{% url 'endorse' instance.pk %}">Endorsed</a>
+        {% else %}
+        <a type="button" class="btn btn-info" id="endorse_btn" role="button" href="{% url 'endorse' instance.pk %}">Endorse</a>
+        {% endif %}
+        {% if is_connection == "notConnected" %}
+        <a type="button" class="btn btn-info" id="connect_btn" role="button" href="{% url 'connection' instance.pk %}">Connect+</a>
+        {% elif is_connection == "connected" %}
+        <a type="button" class="btn btn-info" id="connect_btn" role="button" href="{% url 'connection' instance.pk %}">Connected</a>
+        {% else %}
+        <a type="button" class="btn btn-info" id="connect_btn" role="button" href="{% url 'connection' instance.pk %}">Requested</a>
+        {% endif %}
+        <h4 id="f_count">following:{{following_count}}</h4>
+        <h4 id="follower_count">follower:{{follower_count}}</h4>
+        <div>
+            <fieldset class="rating">
+                <input type="radio" class="starInp" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
+                <input type="radio" class="starInp" id="star4half" name="rating" value="4.5" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
+                <input type="radio" class="starInp" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
+                <input type="radio" class="starInp" id="star3half" name="rating" value="3.5" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
+                <input type="radio" class="starInp" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
+                <input type="radio" class="starInp" id="star2half" name="rating" value="2.5" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
+                <input type="radio" class="starInp" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
+                <input type="radio" class="starInp" id="star1half" name="rating" value="1.5" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
+                <input type="radio" class="starInp" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
+                <input type="radio" class="starInp" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
+            </fieldset>
+        </div><br>
+        <div>
+            <h3>{{rating}} Profile Rating</h3>
+        </div>
+        <div>
+            <a type="button" class="btn btn-success" id="connections_btn" role="button" href="{% url 'connectionList' instance.pk %}">Connections</a>
+        </div><br>
+        <div>
+            <a type="button" class="btn btn-warning" id="picCard_btn" role="button" href="#">Pic Card</a>
+            <a type="button" class="btn btn-warning" id="dropCard_btn" role="button" href="#">Drop Card</a>
+        </div><br>
+        <div>
+            <a href="#" style="padding-right: 15px;">Post</a>
+            <a href="{% url 'eventOtheruser' instance.pk %}" style="padding-right: 15px;">Event</a>
+            <a href="{% url 'createEnquiry' instance.pk %}" style="padding-right: 15px;">Enquiry</a>
+            <a href="{% url 'createAppoinment' instance.pk %}">Appoinment</a>
+        </div>
+        <script>
+            $(window).on('load',realTime());
+            function realTime(){
+                $.ajax({
+                    type:"get",
+                    url:"{% url 'countAndNotifications' instance.pk %}",
+                    success:function(data){
+                        $("#follower_count").html("follower:"+data["follower_count"])
+                        $("#connect_btn").html(data["is_connection"])
+                        setTimeout(realTime, 2000);
+                    }
+                });
+            }
+        </script>
+        <script>
+            $(document).ready(function(){
+            $(".starInp").click(function(){
+                var rating = $('input[name="rating"]:checked').val();
+                $.ajax({
+                    url: "{% url 'starRating' %}",
+                    type: 'POST',
+                    data: { "rating": rating },
+                })
+            });
+            });
+        </script>
+        <script>
+            $("#follow").click(function(e){
+                e.preventDefault();
+                var href = this.href;
+                $.ajax({
+                    url : href,
+                    success : function(response){
+                        if(response["following"]){
+                            $("#follow").html("Unfollow")
+                            $("#f_count").html("following:"+response["following_count"])
+                        }
+                        else{
+                            $("#follow").html("Follow")
+                            $("#f_count").html("following:"+response["following_count"])
+                        }
+                    }
+                })
+            })
+        </script>
+        <script>
+            $("#endorse_btn").click(function(e){
+                e.preventDefault();
+                var href = this.href;
+                $.ajax({
+                    url : href,
+                    success : function(response){
+                        if(response["endorsing"]){
+                            $("#endorse_btn").html("Endorsed")
+                            // $("#f_count").html("following:"+response["following_count"])
+                        }
+                        else{
+                            $("#endorse_btn").html("Endorse")
+                            // $("#f_count").html("following:"+response["following_count"])
+                        }
+                    }
+                })
+            })
+        </script>
+        <script>
+            $("#connect_btn").click(function(e){
+                e.preventDefault();
+                var href = this.href;
+                $.ajax({
+                    url : href,
+                    success : function(response){
+                        if(response["isconnection"]=="notConnected"){
+                            $("#connect_btn").html("Connect+")
+                        }
+                        else if(response["isconnection"]=="connected"){
+                            $("#connect_btn").html("Connected")
+                        }
+                        else{
+                            $("#connect_btn").html("Requested")
+                        }
+                    }
+                })
+            })
+        </script>
+    </body>
+</html>

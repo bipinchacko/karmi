@@ -1,0 +1,79 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REGISTER AS</title>
+<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/all.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/byhand.css' %}">
+<script type="text/javascript" src="{% static 'js/jquery-3.5.1.js' %}"></script>
+<script	type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</head>
+
+<body>
+<div class="container-fluid w-100">
+  <form action="#">
+  <div class="row">
+    <nav class="navbar navbar-expand-lg navbar-light w-100 login-header">
+      <div class="navbar-brand w-50"><img src="" alt=""></div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+      <div class="collapse navbar-collapse pb-2" id="navbarSupportedContent">
+        <input type="text" class="form-control m-2 width" id="email" placeholder="Email or Phone Number">
+        <div class="width m-2 pswd">
+          <input type="password" class="form-control top" id="password" placeholder="Password">
+          <p>Forgot Password ?</p>
+        </div>
+        <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-primary my-2 my-sm-0 m-2 btn1 w-25" type="submit">Login</button>
+        </form>
+      </div>
+    </nav>
+    <div class="container register">
+      <h4>Register As</h4>
+      <div class="col-12 register-as">
+
+        <div class="col-4 register-all">
+          <a href="{% url 'register_company' %}">
+          <h2>Company</h2>
+            </a>
+        </div>
+
+
+        <div class="col-4 register-all">
+          <a href="{% url 'register_professional' %}">
+          <h2>Professional</h2>
+            </a>
+        </div>
+
+
+        <div class="col-4 register-all">
+          <a href="{% url 'register_freelancer' %}">
+          <h2>Freelancer</h2>
+            </a>
+        </div>
+
+      </div>
+		<div class="col-12 register-as2">
+
+        <div class="col-6 register-all2 mr">
+          <a href="{% url 'register_student' %}">
+          <h2>Student</h2>
+            </a>
+        </div>
+          </a>
+
+        <div class="col-6 register-all2 ml">
+          <a href="{% url 'register_public' %}">
+          <h2>Public</h2>
+            </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
+</body>
+</html>

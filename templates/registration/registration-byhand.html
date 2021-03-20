@@ -1,0 +1,158 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>REGISTRATION | BYHAND</title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/all.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/byhand.css' %}">
+    <script type="text/javascript" src="{% static 'js/jquery-3.5.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</head>
+
+<body>
+<div class="container-fluid w-100">
+    <form action="#">
+        <div class="row">
+            <nav class="navbar navbar-expand-lg navbar-light w-100 login-header">
+                <div class="navbar-brand w-50"><img src="img/DENTOL.png" alt=""></div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse pb-2" id="navbarSupportedContent">
+                    <input type="text" class="form-control m-2 width" id="email" placeholder="Email or Phone Number">
+                    <div class="width m-2 pswd">
+                        <input type="password" class="form-control top" id="password" placeholder="Password">
+                        <p>Forgot Password ?</p>
+                    </div>
+
+                    <button class="btn btn-primary my-2 my-sm-0 m-2 btn1 w-25" type="submit">Login</button>
+    </form>
+</div>
+</nav>
+<div class="col-12 login-body">
+    <form method="POST">
+        {% csrf_token %}
+        <div class="card reg pt-0">
+            <h4>BY HAND</h4>
+            <input type="email" class="form-control mt-3 ml-4 mr-4 email" id="email2" placeholder="Email" name="email"
+                   required>
+            <input type="text" class="form-control mt-3 ml-4 mr-4 email" id="phoneno" placeholder="Phone Number"
+                   name="phone" required>
+            <input type="password" class="form-control mt-3 ml-4 mr-4 email" id="password1" placeholder="Password"
+                   name="password1" required>
+            <input type="password" class="form-control mt-3 ml-4 mr-4 email" id="password2"
+                   placeholder="Confirm Password" name="password2" required>
+            <div class="col-12 buttons mt-4 mb-3 login">
+                <button type="submit" class="btn btn-primary btn1 mb-3 w-50" id="submit-btn">Create Account</button>
+            </div>
+
+        </div>
+</div>
+</div>
+</form>
+</div>
+<script>
+    $('#submit-btn').on('click',function(){
+        $(".errorcpsw").hide()
+
+
+        var password  = $('#password1').val();
+        var cpassword  = $('#password2').val();
+
+        if (password != cpassword){
+
+
+            $('#password2').after('<span class="errorcpsw" style="color:red">Password Mismatch</span>');
+
+
+
+            return false;
+
+
+        }
+
+
+    })
+
+
+$('#email2').keyup(function(){
+
+
+        var email= $('#email2').val();
+
+            if(email!=""){
+
+                    $.ajax({
+
+                        url : '{% url 'check_email_exist' %}',
+                        type : 'POST',
+                        data : {email:email},
+                    })
+                    .done(function(response){
+
+                         if(response == 'True'){
+                         $('#email-error').hide();
+                         $( "#email2" ).after( '<span id="email-error" style="color:red">Email Already Used</span>' );
+                         $("#submit-btn").attr("disabled", true)
+                         }else{
+                           $('#email-error').hide();
+                           $("#submit-btn").removeAttr("disabled")
+                         }
+
+                })
+
+                    }
+
+
+})
+
+$('#phoneno').keyup(function(){
+
+
+        var phoneno= $('#phoneno').val();
+
+            if(phoneno!=""){
+
+
+                    $.ajax({
+
+
+                        url : '{% url 'check_phone_exist' %}',
+                        type : 'POST',
+                        data : {phone:phoneno},
+                    })
+                    .done(function(response){
+                    console.log(response);
+
+                         if(response == 'True'){
+                         $('#phoneno-error').hide();
+                         $( "#phoneno" ).after( '<span id="phoneno-error" style="color:red">phone Already Used</span>' );
+                         $("#submit-btn").attr("disabled", true)
+                         }else{
+                           $('#phoneno-error').hide();
+                           $("#submit-btn").removeAttr("disabled")
+                         }
+
+                })
+
+                    }
+
+
+})
+
+
+
+
+
+
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home</title>
+<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="{% static 'css/all.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/byhand-all.css' %}">
+<script type="text/javascript" src="{% static 'js/jquery-3.5.1.js' %}"></script> 
+<script	type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <!-- <link rel="stylesheet" href="/resources/demos/style.css"> -->
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-sm navbar-light bg-gray">
+  <div class="">
+    <button class="btn btn-outline-info btn-sm openbtn" onclick="myFunction()" id="menu-toggle"> <span class="dark-blue-text"><i class="fas fa-bars fa-1x"></i></span> </button>
+  </div>
+  <div class="container row">
+    <div class="input-group search">
+      <form action="{% url 'manualsearch' %}" method="get">
+        <input class="form-control py-2 border-right-0 border" type="text" id="tags" name="tags" placeholder="Search">
+        <span class="input-group-append">
+        <button class="btn btn-outline-secondary border-left-0 border bg-white" id="btn-icon" type="submit"> <i class="fa fa-search  bg-blue"></i></button>
+        </span>
+      </form> 
+    </div>
+  </div>
+  <button class="navbar-toggler navv" type="button" data-toggle="collapse" data-target="#navbarSupportedContents"
+            aria-controls="navbarSupportedContents" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContents">
+    <ul class="navbar-nav ml-auto disp">
+      <li class="nav-item dropdown mr-5"> <a href="#" class="btn btn-clean"> <span class="badge badge-danger badge-corner">8</span> <i class="far fa-bell bg-blue"></i> </a> </li>
+      <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle mr-5 text-dark" href="#" id="navbarDropdown2" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Annie Fab </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown"> <a class="dropdown-item text-danger logout-dropbox" href=" #">View Profile</a> <a class="dropdown-item logout-dropbox" href="#">Help</a> <a class="dropdown-item logout-dropbox" href="#">Logout</a> </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="border-bottom bordclass"> </div>
+<div class="d-flex w-100" id="wrapper">
+  <!-- Sidebar -->
+  <div class="border-right sidepanel" id="sidebar-wrapper">
+    <div class="search-leftnav col-12">
+      <input type="text" name="search" placeholder="SEARCH.." class="search2" id="id_input">
+      <button type="submit" class="scrhbtn"><i class="fa fa-search "></i></button>
+    </div>
+    <div class="list-group list-group-flush mt-4 left-nav"> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3570.png' %}" alt="" > <span class="px-4 items ">Home</span> </a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3571.png' %}" alt="" > <span class="px-4 items ">Profile</span></a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3572.png' %}" alt="" > <span class="px-4 items ">Activities</span></a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3573.png' %}" alt="" > <span class="px-4 items">Settings</span> </a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3569.png' %}" alt="" > <span class="px-4 items ">Verifications</span></a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3578.png' %}" alt="" > <span class="px-4 items ">Share</span></a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3575.png' %}" alt="" > <span class="px-4 items">Help</span> </a> 
+      <a href="#" class="list-group-items list-group-item-action d-flex"><img src="{% static 'img/Group 3576.png' %}" alt="" > <span class="px-4 items">FAQ</span> </a> 
+    </div>
+  </div>
+  <!-- /#sidebar-wrapper -->
+  <!-- Page Content -->
+  {% block content %}
+
+  {% endblock %}
+
+  <!-- /#page-content-wrapper -->
+</div>
+
+<script>
+  $( function() {
+    
+    $( "#tags" ).autocomplete({
+      source: "{% url 'autosuggest' %}",
+    });
+  } );
+  </script>
+
+<script>
+       	function myFunction(){
+		var x = document.getElementById("sidebar-wrapper");
+		if (x.style.display === "none") {
+			x.style.display = "block";
+		} else{
+			x.style.display = "none";
+		}
+	}
+    </script>
+</body>
+</html>

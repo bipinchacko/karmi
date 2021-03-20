@@ -1,0 +1,74 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LOGIN</title>
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/all.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/byhand.css' %}">
+    <script type="text/javascript" src="{% static 'js/jquery-3.5.1.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+</head>
+
+<body>
+<div class="container-fluid w-100">
+    <form action="#" method="post">
+        {% csrf_token %}
+        <div class="row">
+            <nav class="navbar navbar-expand-lg navbar-light w-100 login-header">
+                <div class="navbar-brand w-50"><img src="" alt=""></div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse pb-2" id="navbarSupportedContent">
+                    <input type="text" class="form-control m-2 width" id="email" placeholder="Email or Phone Number">
+                    <div class="width m-2 pswd">
+                        <input type="password" class="form-control top" id="password" placeholder="Password">
+                        <p>Forgot Password ?</p>
+                    </div>
+
+                    <button class="btn btn-primary my-2 my-sm-0 m-2 btn1 w-25" type="submit">Login</button>
+
+
+    </form>
+</div>
+</nav>
+<div class="col-12 login-body">
+    <div class="card pt-0">
+        <div class="form-group p-2 mb-0 mt-4"><img src="" alt="">
+            <form class="form-inline my-2 my-lg-0" method="post">
+                {% csrf_token %}
+
+                <div class="col-12 mt-5">
+                    <input type="text" class="form-control col-12" id="inputEmail1" aria-describedby="emailHelp"
+                           placeholder="Enter email" name="username" style="width:500px">
+                    <input type="password" class="form-control mt-4 col-12" id="password2" placeholder="Password"
+                           name="password" style="width:500px">
+                </div>
+
+        </div>
+        <div class="col-12 buttons mt-3 login">
+            <button type="submit" class="btn btn-primary btn1 mb-3 w-25">Log in</button>
+            <a href="">
+                <p>Forgot Password?</p>
+            </a>
+            <a href="{% url 'register' %}"> <button type="button" class="btn btn-primary btn1 mt-3">Create New Account</button> </a>
+        </div>
+        <b style="color:red">{% if messages %}
+                {% for msg in messages %}
+                        {{ msg }}
+                {% endfor %}
+            {% endif %} </b>
+            </form>
+        <div class="col-12 images mt-4 mb-5"><img src="{% static 'img/Group 56.png' %}" alt=""> <img
+                src="{% static 'img/fb.png' %}" alt=""> <img src="{% static 'img/go.png' %}" alt=""></div>
+    </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>
