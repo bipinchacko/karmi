@@ -82,4 +82,5 @@ class CreateAppoinment2(models.Model):
     purpose = models.CharField(max_length=250)
     description = models.CharField(max_length=500)
     dateandtime = models.DateTimeField()
+    active = models.IntegerField(default=0)
     created_on = models.DateTimeField(auto_now=True)

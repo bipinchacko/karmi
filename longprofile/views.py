@@ -351,6 +351,7 @@ def enquirySave(request,pk):
 #appoinment
 def createAppoinment(request,pk):
     current_user = request.user
+    username = current_user.first_name
     other_user = int(pk)
     form = CreateAppoinmentForm()
     if current_user.id != other_user:
@@ -372,12 +373,15 @@ def createAppoinment(request,pk):
             return HttpResponseRedirect(reverse("createAppoinment",kwargs={'pk':other_user}))
     context = {
         "form":form,
+        "username":username
     }
     return render(request,'longprofile/appoinment.html',context)
 def myappoinment(request):
     date = datetime.datetime.now()
     # current_time = date.strftime("%X")
     # current_date = date.strftime("%Y-%m-%d")
-    pending = CreateAppoinment2.objects.filter(dateandtime__gte = date)
-    print(pending)
-    return render(request,'longprofile/myappoinment.html')
+    pending = CreateAppoinment2.objects.filter(dateandtime__gte = date,active = 0)
+    context = {
+        "pending":pending,
+    }
+    return render(request,'longprofile/myappoinment.html',context)

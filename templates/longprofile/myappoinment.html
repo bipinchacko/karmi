@@ -5,10 +5,25 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <h2>My Appointment</h2>
-    <h4>Pending</h4>
+    <div>
+        <h2>My Appointment</h2>
+        <h4>Pending</h4>
+        {% for i in pending %}
+            <p>Name:{{i.name}}</p>
+            <p>Purpose of visit:{{i.purpose}}</p>
+            <p>{{i.description}}</p>
+            <p>Date:{{i.dateandtime}}</p>
+            <a type="button" class="btn btn-success" id="approve" role="button" href="#">Approve</a>
+            <a type="button" class="btn btn-primary " id="modify" role="button" href="#">Modify</a>
+            <a type="button" class="btn btn-danger" id="delete" role="button" href="#">Delete</a><br>
+            -----------------------------------------------
+        {% endfor %}
+    </div>
     <h4>Active</h4>
     <h4>Complete</h4>
 </body>
