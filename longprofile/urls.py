@@ -32,4 +32,7 @@ urlpatterns = [
     #appoinment
     url('^createAppoinment/(?P<pk>\d+)/$',views.createAppoinment,name="createAppoinment"),
     url('^myappoinment/',views.myappoinment,name="myappoinment"),
+    url('^approveappointment/(?P<pk>\d+)/$',views.approveappointment,name="approveappointment"),
+    url('^updateappointment/(?P<pk>\d+)/$',views.updateappointment,name="updateappointment"),
+    url('^deleteappointment/(?P<pk>\d+)/$',views.deleteappointment,name="deleteappointment"),
 ]

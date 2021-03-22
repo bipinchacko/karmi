@@ -378,10 +378,47 @@ def createAppoinment(request,pk):
     return render(request,'longprofile/appoinment.html',context)
 def myappoinment(request):
     date = datetime.datetime.now()
+    current_user = request.user
     # current_time = date.strftime("%X")
     # current_date = date.strftime("%Y-%m-%d")
-    pending = CreateAppoinment2.objects.filter(dateandtime__gte = date,active = 0)
+    pending = CreateAppoinment2.objects.filter(dateandtime__gte = date,active = 0,enquired_person_id = current_user.id)
+    actived = CreateAppoinment2.objects.filter(dateandtime__gte = date,active = 1,enquired_person_id = current_user.id)
+    complete = CreateAppoinment2.objects.filter(dateandtime__lte = date,enquired_person_id = current_user.id)
+    requested = CreateAppoinment2.objects.filter(user_id = current_user.id)
     context = {
         "pending":pending,
+        "actived":actived,
+        "complete":complete,
+        "requested":requested
     }
     return render(request,'longprofile/myappoinment.html',context)
+def approveappointment(request,pk):
+    view = CreateAppoinment2.objects.get(id=pk)
+    view.active = 1
+    view.save()
+    return HttpResponseRedirect(reverse("myappoinment"))
+def updateappointment(request,pk):
+    view = CreateAppoinment2.objects.get(id=pk)
+    view2 = view.dateandtime
+    dateview = view2.strftime("%Y-%m-%d")
+    timeview = view2.strftime("%H:%M")
+    print(dt)
+    if request.method =='POST':
+        a =request.POST['date']
+        b = request.POST['time']
+        bb = b.replace(":","")
+        new_date = datetime.datetime.strptime(a, '%Y-%m-%d')
+        mytime = dt.datetime.strptime(bb,'%H%M').time()
+        c = dt.datetime.combine(new_date, mytime)
+        view.dateandtime = c
+        view.save()
+        return HttpResponseRedirect(reverse("myappoinment"))
+    context = {
+        "dateview":dateview,
+        "timeview":timeview
+    }
+    return render(request,'longprofile/updateappointment.html',context)
+def deleteappointment(request,pk):
+    view = CreateAppoinment2.objects.get(id=pk)
+    view.delete()
+    return HttpResponseRedirect(reverse("myappoinment"))
