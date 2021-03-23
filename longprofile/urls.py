@@ -25,10 +25,12 @@ urlpatterns = [
     path('event/',views.event,name="event"),
     url('^eventOtheruser/(?P<pk>\d+)/$',views.eventOtheruser,name="eventOtheruser"),
     url('^eventSave/(?P<pk>\d+)/$',views.eventSave,name="eventSave"),
+    url('^deleteevent/(?P<pk>\d+)/$',views.deleteevent,name="deleteevent"),
     #enquiry
     url('^createEnquiry/(?P<pk>\d+)/$',views.createEnquiry,name="createEnquiry"),
     url('^myenquiry/',views.myenquiry,name="myenquiry"),
     url('^enquirySave/(?P<pk>\d+)/$',views.enquirySave,name="enquirySave"),
+    url('^deleteenquiry/(?P<pk>\d+)/$',views.deleteenquiry,name="deleteenquiry"),
     #appoinment
     url('^createAppoinment/(?P<pk>\d+)/$',views.createAppoinment,name="createAppoinment"),
     url('^myappoinment/',views.myappoinment,name="myappoinment"),

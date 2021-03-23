@@ -46,14 +46,5 @@
             })
         </script>
     {% endfor %}
-    <div>
-        <h2>Saved Event</h2>
-        {% for i in savedEventView %}
-            <p>Name:{{i.event.name}}</p>
-            <p>Author:{{i.event.user.first_name}}</p>
-            <p>{{i.event.description}}</p>
-        {% endfor %}
-    </div>
-    
 </body>
 </html>

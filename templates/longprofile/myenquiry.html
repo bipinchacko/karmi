@@ -66,6 +66,7 @@
             <p>title:{{i.enquiry.title}}</p>
             <p>{{i.enquiry.description}}</p>
             <p>posted on:{{i.enquiry.created_on}}</p>
+            <a href="{% url 'deleteenquiry' i.pk %}" id = "savebtn{{i.id}}"><i id="saveicon{{i.id}}" class="fa fa-star text-warning"  style="font-size: 30px;"></i></a><br>
         {% endfor %}
     </div>
 </body>

@@ -25,42 +25,92 @@ def company_card_update(request):
     current_user = request.user
     if Company_card.objects.filter(user_id = current_user.id):
         view = Company_card.objects.get(user_id = current_user.id)
-        form = Company_cardForm(instance=view)
         if request.method == "POST":
-            form = Company_cardForm(request.POST, instance=view)
-            if form.is_valid():
-                form.save()
+            try:
+                view.front_img = request.FILES['uploadimg']
+            except:
+                view.front_img = view.front_img
+            try:
+                view.back_img = request.FILES['uploadback']
+            except:
+                view.back_img = view.back_img
+            view.name = request.POST['name']
+            view.services = request.POST['service']
+            view.mobile = request.POST['mobile']
+            view.whatsup = request.POST['whatsup']
+            view.company_name = request.POST['cmp_name']
+            view.website = request.POST['Website']
+            view.email = request.POST['email']
+            view.location = request.POST['location']
+            view.company_location = request.POST['cmplocation']
+            view.details = request.POST['detail']
+            view.save()
+
     else:  
-        form = Company_cardForm()
+        view = Company_card()
         if request.method == "POST":
-            form = Company_cardForm(request.POST, request.FILES)
-            if form.is_valid():
-                card = form.save(commit=False)
-                card.user_id = current_user.id
-                card.save()
+            view.front_img = request.FILES['uploadimg']
+            view.back_img = request.FILES['uploadback']
+            view.name = request.POST['name']
+            view.services = request.POST['service']
+            view.mobile = request.POST['mobile']
+            view.whatsup = request.POST['whatsup']
+            view.company_name = request.POST['cmp_name']
+            view.website = request.POST['Website']
+            view.email = request.POST['email']
+            view.location = request.POST['location']
+            view.company_location = request.POST['cmplocation']
+            view.details = request.POST['detail']
+            view.user_id = current_user.id
+            view.save()
     context = {
-        "form":form,
+        "view":view,
     }
     return render(request,'longprofile/company_card_update.html',context)
 def personal_card_update(request):
     current_user = request.user
     if Personal_card.objects.filter(user_id = current_user.id):
         view = Personal_card.objects.get(user_id = current_user.id)
-        form = Personal_cardForm(instance=view)
         if request.method == "POST":
-            form = Personal_cardForm(request.POST, instance=view)
-            if form.is_valid():
-                form.save()
+            try:
+                view.front_img = request.FILES['uploadimg']
+            except:
+                view.front_img = view.front_img
+            try:
+                view.back_img = request.FILES['uploadback']
+            except:
+                view.back_img = view.back_img
+            view.name = request.POST['name']
+            view.services = request.POST['service']
+            view.mobile = request.POST['mobile']
+            view.whatsup = request.POST['whatsup']
+            view.company_name = request.POST['cmp_name']
+            view.website = request.POST['Website']
+            view.email = request.POST['email']
+            view.location = request.POST['location']
+            view.company_location = request.POST['cmplocation']
+            view.details = request.POST['detail']
+            view.save()
+
     else:  
-        form = Personal_cardForm()
+        view = Personal_card()
         if request.method == "POST":
-            form = Personal_cardForm(request.POST, request.FILES)
-            if form.is_valid():
-                card = form.save(commit=False)
-                card.user_id = current_user.id
-                card.save()
+            view.front_img = request.FILES['uploadimg']
+            view.back_img = request.FILES['uploadback']
+            view.name = request.POST['name']
+            view.services = request.POST['service']
+            view.mobile = request.POST['mobile']
+            view.whatsup = request.POST['whatsup']
+            view.company_name = request.POST['cmp_name']
+            view.website = request.POST['Website']
+            view.email = request.POST['email']
+            view.location = request.POST['location']
+            view.company_location = request.POST['cmplocation']
+            view.details = request.POST['detail']
+            view.user_id = current_user.id
+            view.save()
     context = {
-        "form":form,
+        "view":view,
     }
     return render(request,'longprofile/personal_card_update.html',context)
 def autosuggest(request):
@@ -263,20 +313,20 @@ def event(request):
             event.save()
             return HttpResponseRedirect(reverse("event"))
     my_event = CreateEvent.objects.filter(user_id = current_user.id)
+    savedEventView = SavedEvent.objects.filter(savedperson_id = current_user.id)
     context = {
         "form":form,
         "my_event":my_event,
+        "savedEventView":savedEventView
     }
     return render(request,'longprofile/event.html',context)
 def eventOtheruser(request,pk):
     current_user = request.user
     my_event = CreateEvent.objects.filter(user_id = pk)
     saved_event = [i for i in my_event if SavedEvent.objects.filter(savedperson_id = current_user.id,event_id = i)]
-    savedEventView = SavedEvent.objects.filter(savedperson_id = current_user.id)
     context = {
         "my_event":my_event,
         "saved_event":saved_event,
-        "savedEventView":savedEventView
     }
     return render(request,'longprofile/eventOtheruser.html',context)
 def eventSave(request,pk):
@@ -298,6 +348,10 @@ def eventSave(request,pk):
     }
     response = json.dumps(resp)
     return HttpResponse(response,content_type="application/json")
+def deleteevent(request,pk):
+    savedevent = SavedEvent.objects.get(id=pk)
+    savedevent.delete()
+    return HttpResponseRedirect(reverse("event"))
 #enquiry
 def createEnquiry(request,pk):
     current_user = request.user
@@ -348,6 +402,10 @@ def enquirySave(request,pk):
     }
     response = json.dumps(resp)
     return HttpResponse(response,content_type="application/json")
+def deleteenquiry(request,pk):
+    savedenquiry = SavedEnquiry.objects.get(id=pk)
+    savedenquiry.delete()
+    return HttpResponseRedirect(reverse("myenquiry"))
 #appoinment
 def createAppoinment(request,pk):
     current_user = request.user
