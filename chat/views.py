@@ -17,7 +17,7 @@ def chatroom(request,pk:int):
     messages.update(seen=True)
     return render(request,"chat/chatroom.html",{"othrer_user":othrer_user,"messages":messages})
 @login_required
-def ajax_load_message(request,pk):
+def ajax_load_messages(request,pk):
     othrer_user = get_object_or_404(CustomUser, pk=pk)
     messages = Message.objects.filter(seen=False)
     messages.update(seen=True)
@@ -31,7 +31,7 @@ def ajax_load_message(request,pk):
         m = Message.objects.create(receiver=othrer_user, sender=request.user, message=message)
         message_list.append({
             "sender":request.user.first_name,
-            "message":m.message
+            "message":m.message,
             "sent":True
         })
     return JsonResponse(message_list, safe=False)
