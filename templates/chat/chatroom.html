@@ -95,7 +95,7 @@
             return;
         }
         message_input.value = "";
-        fetch("{% url 'chatroom-ajax' othrer_user.id %}",
+        fetch("{% url 'chatroom-ajax' other_user.id %}",
             {
                 method: "POST",
                 credentials: 'same-origin',
@@ -113,7 +113,7 @@
     }
 
     function load_messages() {
-        fetch("{% url 'chatroom-ajax' othrer_user.id %}")
+        fetch("{% url 'chatroom-ajax' other_user.id %}")
             .then(e => e.json())
             .then(messages => {
                 console.log(messages)
