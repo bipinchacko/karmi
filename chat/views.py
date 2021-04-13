@@ -18,7 +18,14 @@ def chatroom(request,pk:int):
     )
     messages.update(seen=True)
     messages = messages | Message.objects.filter(Q(receiver=other_user, sender=request.user) )
-    return render(request, "chat/onetoonechat.html", {"other_user": other_user, "messages": messages,"current_user":current_user})
+    connecteduser = CustomUser.objects.all()
+    context = {
+        "other_user": other_user,
+        "messages": messages,
+        "current_user":current_user,
+        "connecteduser":connecteduser
+    }
+    return render(request, "chat/onetoonechat.html",context)
 @login_required
 def ajax_load_messages(request,pk):
     other_user = get_object_or_404(CustomUser, pk=pk)

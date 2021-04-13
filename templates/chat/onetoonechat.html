@@ -652,13 +652,19 @@
 }
 #frame .content .message-input .wrap .attachment {
   position: absolute;
-  right: 60px;
+  right: 63px;
+  top: 15px;
   z-index: 4;
-  margin-top: 10px;
+  margin-top: 0px;
   font-size: 1.1em;
   color: #435f7a;
   opacity: .5;
   cursor: pointer;
+}
+#frame .upload{
+  width: 40px;
+    height: 40px;
+    background: #e6eaea;
 }
 @media screen and (max-width: 735px) {
   #frame .content .message-input .wrap .attachment {
@@ -701,6 +707,41 @@
 }*/
 .chatnav ul li a:hover{
   background-color: black;
+}
+.attachment-preview {
+    position: relative;
+    padding: 10px;
+    background-color: white;
+    margin-bottom: 5px;
+}
+.image-file img{
+    cursor: pointer;
+    width: 140px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    background-color: #f7f7f7;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.attachment-preview>p>svg {
+    font-size: 16px;
+    margin: 0;
+    margin-bottom: -1px;
+    color: #737373;
+}
+.attachment-preview>svg:first-child {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.33);
+    width: 20px;
+    height: 20px;
+    padding: 3px;
+    border-radius: 100%;
+    font-size: 16px;
+    margin: 0;
+    top: 10px;
+    color: #fff;
 }
 </style>
 </head>
@@ -746,110 +787,27 @@ Website: http://emilcarlsson.se/
 		</div>
 		<div id="search">
 			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-			<input type="text" placeholder="Search contacts..." />
+			<input type="text" id="myInput1" placeholder="Search contacts..." />
 		</div>
 		<div id="contacts">
-			<ul>
-				<li class="contact">
+			<ul id="so">
+        {% for i in connecteduser %}
+				<li class="contact" id="{{i.id}}">
 					<div class="wrap">
-						<span class="contact-status online"></span>
+						<span class="contact-status online" ></span>
 						<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
 						<div class="meta">
-							<p class="name">Louis Litt</p>
-							<p class="preview">You just got LITT up, Mike.</p>
+							<p class="name">{{i.first_name}}</p>
+							<p class="preview">{{i.email}}</p>
 						</div>
 					</div>
 				</li>
-				<li class="contact active">
-					<div class="wrap">
-						<span class="contact-status busy"></span>
-						<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-						<div class="meta">
-							<p class="name">Harvey Specter</p>
-							<p class="preview">Wrong. You take the gun, or you pull out a bigger one. Or, you call their bluff. Or, you do any one of a hundred and forty six other things.</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status away"></span>
-						<img src="http://emilcarlsson.se/assets/rachelzane.png" alt="" />
-						<div class="meta">
-							<p class="name">Rachel Zane</p>
-							<p class="preview">I was thinking that we could have chicken tonight, sounds good?</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status online"></span>
-						<img src="http://emilcarlsson.se/assets/donnapaulsen.png" alt="" />
-						<div class="meta">
-							<p class="name">Donna Paulsen</p>
-							<p class="preview">Mike, I know everything! I'm Donna..</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status busy"></span>
-						<img src="http://emilcarlsson.se/assets/jessicapearson.png" alt="" />
-						<div class="meta">
-							<p class="name">Jessica Pearson</p>
-							<p class="preview">Have you finished the draft on the Hinsenburg deal?</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status"></span>
-						<img src="http://emilcarlsson.se/assets/haroldgunderson.png" alt="" />
-						<div class="meta">
-							<p class="name">Harold Gunderson</p>
-							<p class="preview">Thanks Mike! :)</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status"></span>
-						<img src="http://emilcarlsson.se/assets/danielhardman.png" alt="" />
-						<div class="meta">
-							<p class="name">Daniel Hardman</p>
-							<p class="preview">We'll meet again, Mike. Tell Jessica I said 'Hi'.</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status busy"></span>
-						<img src="http://emilcarlsson.se/assets/katrinabennett.png" alt="" />
-						<div class="meta">
-							<p class="name">Katrina Bennett</p>
-							<p class="preview">I've sent you the files for the Garrett trial.</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status"></span>
-						<img src="http://emilcarlsson.se/assets/charlesforstman.png" alt="" />
-						<div class="meta">
-							<p class="name">Charles Forstman</p>
-							<p class="preview">Mike, this isn't over.</p>
-						</div>
-					</div>
-				</li>
-				<li class="contact">
-					<div class="wrap">
-						<span class="contact-status"></span>
-						<img src="http://emilcarlsson.se/assets/jonathansidwell.png" alt="" />
-						<div class="meta">
-							<p class="name">Jonathan Sidwell</p>
-							<p class="preview"><span>You:</span> That's bullshit. This deal is solid.</p>
-						</div>
-					</div>
-				</li>
+        <script>
+          $("#{{i.id}}").on("click", function(){
+            alert({{i.id}});
+          });
+        </script>
+        {% endfor %}
 			</ul>
 		</div>
 		<div id="bottom-bar">
@@ -875,10 +833,12 @@ Website: http://emilcarlsson.se/
 			</ul>
 		</div>
 		<div class="message-input">
-			<div class="wrap">
+			<div class="send-message">
+        <div class="wrap">
 			<input type="text" id="message-input" placeholder="Write your message..." />
-			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
+			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" class="upload" name="file[]" accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="display: none;"> </i></label></a>
 			<button class="submit" id="send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+      </div>
 			</div>
 		</div>
 	</div>
@@ -921,6 +881,13 @@ Website: http://emilcarlsson.se/
 
 function newMessage() {
 	message = $(".message-input input").val();
+  
+      // var file = document.getElementById('output');
+      // var file = new Image();
+      // file.src = 
+// document.body.appendChild(image);
+  console.log(image);
+  
 	if($.trim(message) == '') {
 		return false;
 	}
@@ -959,15 +926,17 @@ function newMessage() {
             })
     }
     function construct_message(message){
-      console.log(message)
+      // console.log(message)
       let a = {{current_user}}
-      console.log(a)
+      // console.log(a)
       if (message.sender === a){
         console.log("y")
       }
       else
       {
-        console.log("N")
+        $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
+        p.scrollIntoView()
+
       }
     }
   
@@ -986,5 +955,67 @@ $(window).on('keydown', function(e) {
   }
 });
 //# sourceURL=pen.js
+
+</script>
+<script>
+  $(document).ready(function(){
+    $("#myInput1").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#so .contact").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>
+<script>
+  $('body').on('change', ".upload", (e) => {
+        let file = e.target.files[0];
+        let reader = new FileReader();
+        let sendCard = $('.send-message');
+        reader.readAsDataURL(file);
+        // reader.addEventListener('loadstart', (e) => {
+        //     $('#message-form').before(loadingSVG());
+        // });
+        reader.addEventListener('load', (e) => {
+            $('.send-message').find('.loadingSVG').remove();
+            if (!file.type.match("image.*")) {
+                // if the file not image
+                sendCard.find('.attachment-preview').remove(); // older one
+                sendCard.prepend(attachmentTemplate('file', file.name));
+            } else {
+                // if the file is an image
+                sendCard.find('.attachment-preview').remove(); // older one
+                sendCard.prepend(attachmentTemplate('image', file.name, e.target.result));
+            }
+        });
+    });
+    // Attachment preview cancel button.
+    $('body').on('click', ".attachment-preview .cancel", (e) => {
+        cancelAttachment();
+    });
+    // upload image preview card.
+function attachmentTemplate(fileType, fileName, imgURL = null) {
+    if (fileType != 'image') {
+        return `
+        <div class="attachment-preview">
+            <span class="fa fa-times cancel"></span>
+            <p style="padding:0px 30px;"><span class="fa fa-file"></span> ` + fileName + `</p>
+        </div>
+        `;
+    } else {
+        return `
+        <div class="attachment-preview">
+            <span class="fa fa-times cancel"></span>
+            <div class="image-file chat-image" id="output" >
+              <img src="`+ imgURL +`"></div>
+            <p><span class="fas fa-file-image"></span> ` + fileName + `</p>
+        </div>
+        `;
+    }
+}
+function cancelAttachment() {
+    $('.send-message').find('.attachment-preview').remove();
+    $('.upload').replaceWith($('.upload').val('').clone(true));
+}
 </script>
 </body></html>
