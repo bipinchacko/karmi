@@ -835,9 +835,11 @@ Website: http://emilcarlsson.se/
 		<div class="message-input">
 			<div class="send-message">
         <div class="wrap">
+          <!-- <form> -->
 			<input type="text" id="message-input" placeholder="Write your message..." />
-			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" class="upload" name="file[]" accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="display: none;"> </i></label></a>
+			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" id="upload" class="upload" name="upload" accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="display: none;"> </i></label></a>
 			<button class="submit" id="send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+    <!-- </form> -->
       </div>
 			</div>
 		</div>
@@ -881,40 +883,54 @@ Website: http://emilcarlsson.se/
 
 function newMessage() {
 	message = $(".message-input input").val();
-  
-      // var file = document.getElementById('output');
-      // var file = new Image();
-      // file.src = 
-// document.body.appendChild(image);
-  console.log(image);
-  
-	if($.trim(message) == '') {
-		return false;
-	}
+  var img="";
+  if(document.getElementById("upload").files[0] != null){
+  img = document.getElementById("upload").files[0].name;
+}
+  console.log(message)
+  console.log(img);
 	$('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
 	$('.message-input input').val(null);
 	$('.contact.active .preview').html('<span>You: </span>' + message);
 	$(".messages").animate({ scrollTop: $(document).height() }, "fast");
-  if (message === "") {
-            return;
+  console.log("*****")
+  // fetch("{% url 'chatroom-ajax' other_user.id %}",
+  //     {
+  //         method: "POST",
+  //         credentials: 'same-origin',
+  //         headers: {
+  //             "Content-Type": 'application/json',
+  //             'X-CSRFToken': '{{ csrf_token }}'
+  //             },
+  //         body: JSON.stringify(message,img)
+  //     }
+  
+  // if (image === null){
+  //   image="";
+  // }
+  $.ajax(
+    // {
+    //     url: "{% url 'chatroom-ajax' other_user.id %}",
+    //     type: 'POST',
+    //     data: { "message": message,csrfmiddlewaretoken: '{{ csrf_token }}' },
+    //     //data: history,
+    //     success: function (response) {
+    //       // alert('hi');
+    //       // data-toggle="modal" data-target="#teethModal"
+    //       // $("#teethModal").modal('show');
+    //     }
+    {
+            'url': "{% url 'chatroom-ajax' other_user.id %}",
+            'type': 'POST',
+            'contentType': 'application/json; charset=UTF-8',
+            'data': JSON.stringify({'message':message,'img':img}),
+            'dataType': 'json',
+            'success': function ( return_data ) {                 
         }
-        // message_input.value = "";
-        fetch("{% url 'chatroom-ajax' other_user.id %}",
-            {
-                method: "POST",
-                credentials: 'same-origin',
-                headers: {
-                    "Content-Type": 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify(message)
-            }
-        ).then(e => e.json()).then(messages => {
-            for (message of messages) {
-                construct_message(message);
-            }
-        });
-      };
+      })
+  
+
+}
     function load_messages() {
         fetch("{% url 'chatroom-ajax' other_user.id %}")
             .then(e => e.json())
@@ -927,15 +943,14 @@ function newMessage() {
     }
     function construct_message(message){
       // console.log(message)
-      let a = {{current_user}}
+      let a = '{{current_user}}';
       // console.log(a)
       if (message.sender === a){
-        console.log("y")
+        console.log("y");
       }
       else
       {
         $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
-        p.scrollIntoView()
 
       }
     }
