@@ -6,7 +6,6 @@ from django.db.models import Q
 import json
 from django.shortcuts import get_object_or_404
 from django.core import serializers
-from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -28,7 +27,6 @@ def chatroom(request,pk:int):
     }
     return render(request, "chat/onetoonechat.html",context)
 @login_required
-@csrf_exempt
 def ajax_load_messages(request,pk):
     other_user = get_object_or_404(CustomUser, pk=pk)
     messages = Message.objects.filter(seen=False).filter(
@@ -37,21 +35,22 @@ def ajax_load_messages(request,pk):
     message_list = [{
         "sender": message.sender.id,
         "message": message.message,
-        "sent": message.sender == request.user
+        "sent": message.sender == request.user,
+        "file":message.files.name
     } for message in messages]
     messages.update(seen=True)
     
     if request.method == "POST":
-        message = json.loads(request.body.decode('UTF-8'))
-        mes = message['message']
-        print(mes)
-        files = message['img']
-        print(files)
-        m = Message.objects.create(receiver=other_user, sender=request.user, message=mes, files=files)
+        a = request.POST.get('message')
+        b = request.FILES.get('upload')
+        if a == null and b == None:
+            print("null")
+        else:
+            m = Message.objects.create(receiver=other_user, sender=request.user, message=a, files=b)
         message_list.append({
             "sender": request.user.id,
             "message": m.message,
             "sent": True,
+            "file":m.files.name,
         })
-    # print(message_list)
     return JsonResponse(message_list, safe=False)

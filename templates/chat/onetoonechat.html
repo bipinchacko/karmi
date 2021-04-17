@@ -743,6 +743,11 @@
     top: 10px;
     color: #fff;
 }
+#mes-img{
+  height: 175px;
+  border-radius: 37px !important;
+  width: 183px !important;
+}
 </style>
 </head>
 <body>
@@ -828,6 +833,9 @@ Website: http://emilcarlsson.se/
         ">
 					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
 					<p>{{ message.message }}</p>
+          {% if message.files %}
+          <img src="{{message.files.url}}" id="mes-img" alt="">
+          {% endif %}
 				</li>
 				{% endfor %}
 			</ul>
@@ -835,133 +843,62 @@ Website: http://emilcarlsson.se/
 		<div class="message-input">
 			<div class="send-message">
         <div class="wrap">
-          <!-- <form> -->
-			<input type="text" id="message-input" placeholder="Write your message..." />
-			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" id="upload" class="upload" name="upload" accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="display: none;"> </i></label></a>
+          <form id="form" name="form" enctype="multipart/form-data">
+			<input type="text" id="message-input" name="message" placeholder="Write your message..." />
+			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" id="upload" class="upload" name="upload" accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="visibility: hidden;"> </i></label></a>
 			<button class="submit" id="send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-    <!-- </form> -->
+    </form>
       </div>
 			</div>
 		</div>
 	</div>
 </div>
-<!-- <script src='//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script><script src='https://code.jquery.com/jquery-2.2.4.min.js'></script> -->
 <script >
-// $(".messages").animate({ scrollTop: $(document).height() }, "fast");
-
-// $("#profile-img").click(function() {
-// 	$("#status-options").toggleClass("active");
-// });
-
-// $(".expand-button").click(function() {
-//   $("#profile").toggleClass("expanded");
-// 	$("#contacts").toggleClass("expanded");
-// });
-
-// $("#status-options ul li").click(function() {
-// 	$("#profile-img").removeClass();
-// 	$("#status-online").removeClass("active");
-// 	$("#status-away").removeClass("active");
-// 	$("#status-busy").removeClass("active");
-// 	$("#status-offline").removeClass("active");
-// 	$(this).addClass("active");
-	
-// 	if($("#status-online").hasClass("active")) {
-// 		$("#profile-img").addClass("online");
-// 	} else if ($("#status-away").hasClass("active")) {
-// 		$("#profile-img").addClass("away");
-// 	} else if ($("#status-busy").hasClass("active")) {
-// 		$("#profile-img").addClass("busy");
-// 	} else if ($("#status-offline").hasClass("active")) {
-// 		$("#profile-img").addClass("offline");
-// 	} else {
-// 		$("#profile-img").removeClass();
-// 	};
-	
-// 	$("#status-options").removeClass("active");
-// });
-
 function newMessage() {
+  var form = document.forms.namedItem("form");
+  oData = new FormData(form);
+  var token = '{{csrf_token}}';
 	message = $(".message-input input").val();
-  var img="";
-  if(document.getElementById("upload").files[0] != null){
-  img = document.getElementById("upload").files[0].name;
-}
-  console.log(message)
-  console.log(img);
-	$('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+	// $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
 	$('.message-input input').val(null);
 	$('.contact.active .preview').html('<span>You: </span>' + message);
 	$(".messages").animate({ scrollTop: $(document).height() }, "fast");
-  console.log("*****")
-  // fetch("{% url 'chatroom-ajax' other_user.id %}",
-  //     {
-  //         method: "POST",
-  //         credentials: 'same-origin',
-  //         headers: {
-  //             "Content-Type": 'application/json',
-  //             'X-CSRFToken': '{{ csrf_token }}'
-  //             },
-  //         body: JSON.stringify(message,img)
-  //     }
-  
-  // if (image === null){
-  //   image="";
-  // }
   $.ajax(
-    // {
-    //     url: "{% url 'chatroom-ajax' other_user.id %}",
-    //     type: 'POST',
-    //     data: { "message": message,csrfmiddlewaretoken: '{{ csrf_token }}' },
-    //     //data: history,
-    //     success: function (response) {
-    //       // alert('hi');
-    //       // data-toggle="modal" data-target="#teethModal"
-    //       // $("#teethModal").modal('show');
-    //     }
     {
-            'url': "{% url 'chatroom-ajax' other_user.id %}",
-            'type': 'POST',
-            'contentType': 'application/json; charset=UTF-8',
-            'data': JSON.stringify({'message':message,'img':img}),
-            'dataType': 'json',
-            'success': function ( return_data ) {                 
-        }
-      })
-  
-
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'chatroom-ajax' other_user.id %}",
+      'type': 'POST',
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
+      // 'contentType': 'application/json; charset=UTF-8',
+      'data': oData,
+      'dataType': 'json',
+      'success': function ( message_list ) {
+        console.log(message_list)
+        $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+        // $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img src="'+ {{file.urls}} +'" alt=""></li>').appendTo($('.messages ul'));
+      }
+    })
 }
     function load_messages() {
         fetch("{% url 'chatroom-ajax' other_user.id %}")
             .then(e => e.json())
-            .then(messages => {
-                // console.log(messages)
-                for (message of messages) {
+            .then(message_list => {
+                for (message of message_list) {
                     construct_message(message);
+                    console.log(message)
                 }
             })
     }
     function construct_message(message){
-      // console.log(message)
-      let a = '{{current_user}}';
-      // console.log(a)
-      if (message.sender === a){
-        console.log("y");
-      }
-      else
-      {
         $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
-
-      }
     }
-  
     setInterval(load_messages, 2000);
-
-
-$('.submit').click(function() {
+$('.submit').click(function(e) {
+  e.preventDefault()
   newMessage();
 });
-
 $(window).on('keydown', function(e) {
   if (e.which == 13) {
     newMessage();
@@ -970,7 +907,6 @@ $(window).on('keydown', function(e) {
   }
 });
 //# sourceURL=pen.js
-
 </script>
 <script>
   $(document).ready(function(){

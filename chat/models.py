@@ -9,7 +9,7 @@ class Message(models.Model):
     sender = models.ForeignKey(CustomUser,on_delete = models.CASCADE, related_name="sent_message")
     receiver = models.ForeignKey(CustomUser,on_delete = models.CASCADE, related_name="recieve_message")
     message = models.TextField()
-    files = models.FileField(upload_to='media',null=True,blank=True)
+    files = models.FileField(upload_to='chat',null=True,blank=True)
     seen = models.BooleanField(default=False)
     date_created = models.DateTimeField(auto_now_add=True)
 
