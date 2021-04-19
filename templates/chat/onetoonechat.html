@@ -651,9 +651,9 @@
   outline: none;
 }
 #frame .content .message-input .wrap .attachment {
-  position: absolute;
-  right: 63px;
-  top: 15px;
+  position: relative;
+    right: 13px;
+    top: 7px;
   z-index: 4;
   margin-top: 0px;
   font-size: 1.1em;
@@ -743,7 +743,7 @@
     top: 10px;
     color: #fff;
 }
-#mes-img{
+.mes-img{
   height: 175px;
   border-radius: 37px !important;
   width: 183px !important;
@@ -825,16 +825,18 @@ Website: http://emilcarlsson.se/
 			<div class="social-media">
 			</div>
 		</div>
-		<div class="messages">
+		<div class="messages" id="messages">
 			<ul>
         {% for message in messages %}
 				<li class=" 
         <!-- {% if message.sender == request.user %}sent{% else %}replies{% endif %} -->
         ">
 					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
-					<p>{{ message.message }}</p>
+          {% if message.message != '' %}
+					  <p>{{ message.message }}</p>
+          {% endif %}
           {% if message.files %}
-          <img src="{{message.files.url}}" id="mes-img" alt="">
+            <img src="{{message.files.url}}" class="mes-img" alt="">
           {% endif %}
 				</li>
 				{% endfor %}
@@ -845,7 +847,7 @@ Website: http://emilcarlsson.se/
         <div class="wrap">
           <form id="form" name="form" enctype="multipart/form-data">
 			<input type="text" id="message-input" name="message" placeholder="Write your message..." />
-			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" id="upload" class="upload" name="upload" accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="visibility: hidden;"> </i></label></a>
+			<a class="btn upload"><label><i class="fa fa-paperclip attachment" aria-hidden="true"><input type="file" id="upload" class="upload" name="upload" value= accept="image/*,.txt,.rar,.zip,.pdf,.apk" style="visibility: hidden;"> </i></label></a>
 			<button class="submit" id="send-btn"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
     </form>
       </div>
@@ -854,6 +856,7 @@ Website: http://emilcarlsson.se/
 	</div>
 </div>
 <script >
+  const messages = document.getElementById('messages');
 function newMessage() {
   var form = document.forms.namedItem("form");
   oData = new FormData(form);
@@ -862,7 +865,7 @@ function newMessage() {
 	// $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
 	$('.message-input input').val(null);
 	$('.contact.active .preview').html('<span>You: </span>' + message);
-	$(".messages").animate({ scrollTop: $(document).height() }, "fast");
+	// $(".messages").animate({ scrollTop: $(document).height() }, "fast");
   $.ajax(
     {
       headers: { "X-CSRFToken": token },
@@ -876,10 +879,17 @@ function newMessage() {
       'dataType': 'json',
       'success': function ( message_list ) {
         console.log(message_list)
-        $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+        scrollToBottom();
+        $('.send-message').find('.attachment-preview').remove();
+        if (message != "") {
+          $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
+          } 
         // $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img src="'+ {{file.urls}} +'" alt=""></li>').appendTo($('.messages ul'));
       }
     })
+}
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
 }
     function load_messages() {
         fetch("{% url 'chatroom-ajax' other_user.id %}")
@@ -890,9 +900,16 @@ function newMessage() {
                     console.log(message)
                 }
             })
+            scrollToBottom();
     }
     function construct_message(message){
+      if (message.message != "") {
         $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
+      }
+      if (message.file != "") {
+        $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
+      }
+
     }
     setInterval(load_messages, 2000);
 $('.submit').click(function(e) {
@@ -966,7 +983,7 @@ function attachmentTemplate(fileType, fileName, imgURL = null) {
 }
 function cancelAttachment() {
     $('.send-message').find('.attachment-preview').remove();
-    $('.upload').replaceWith($('.upload').val('').clone(true));
+    $('.upload').replaceWith($('.upload').val(''));
 }
 </script>
 </body></html>
