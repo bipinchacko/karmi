@@ -751,20 +751,6 @@
 </style>
 </head>
 <body>
-<!-- 
-
-A concept for a chat interface. 
-
-Try writing a new message! :)
-
-
-Follow me here:
-Twitter: https://twitter.com/thatguyemil
-Codepen: https://codepen.io/emilcarlsson/
-Website: http://emilcarlsson.se/
-
--->
-
 <div id="frame">
   <div class="chatnav">
     <nav class="navbar navbar">
@@ -787,7 +773,7 @@ Website: http://emilcarlsson.se/
 		<div id="profile">
 			<div class="wrap">
 				<img id="profile-img" src="http://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
-				<p>Mike Ross</p>
+				<p>{{request.user.first_name}}</p>
 			</div>
 		</div>
 		<div id="search">
@@ -798,20 +784,17 @@ Website: http://emilcarlsson.se/
 			<ul id="so">
         {% for i in connecteduser %}
 				<li class="contact" id="{{i.id}}">
-					<div class="wrap">
-						<span class="contact-status online" ></span>
-						<img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
-						<div class="meta">
-							<p class="name">{{i.first_name}}</p>
-							<p class="preview">{{i.email}}</p>
-						</div>
-					</div>
+          <a href="{% url 'chatroom' i.id %}" style="color: #E6EAEA;">
+            <div class="wrap">
+              <span class="contact-status online" ></span>
+              <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+              <div class="meta">
+                <p class="name">{{i.first_name}}</p>
+                <p class="preview">{{i.email}}</p>
+              </div>
+            </div>
+          </a>
 				</li>
-        <script>
-          $("#{{i.id}}").on("click", function(){
-            alert({{i.id}});
-          });
-        </script>
         {% endfor %}
 			</ul>
 		</div>
@@ -833,10 +816,10 @@ Website: http://emilcarlsson.se/
         ">
 					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
           {% if message.message != '' %}
-					  <p>{{ message.message }}</p>
+					  <p class="item" data-item-id="{{ message.id }}">{{ message.message }}</p>
           {% endif %}
           {% if message.files %}
-            <img src="{{message.files.url}}" class="mes-img" alt="">
+            <img data-item-id="{{ message.id }}" src="{{message.files.url}}" class="mes-img" alt="">
           {% endif %}
 				</li>
 				{% endfor %}
@@ -856,6 +839,8 @@ Website: http://emilcarlsson.se/
 	</div>
 </div>
 <script >
+$( document ).ready(function() {
+  scrollToBottom();
   const messages = document.getElementById('messages');
 function newMessage() {
   var form = document.forms.namedItem("form");
@@ -878,19 +863,21 @@ function newMessage() {
       'data': oData,
       'dataType': 'json',
       'success': function ( message_list ) {
-        console.log(message_list)
-        scrollToBottom();
+        for (message of message_list) {
+          console.log()
+        }
         $('.send-message').find('.attachment-preview').remove();
-        if (message != "") {
-          $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message + '</p></li>').appendTo($('.messages ul'));
-          } 
-        // $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img src="'+ {{file.urls}} +'" alt=""></li>').appendTo($('.messages ul'));
+        if (message.message != "") {
+          $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
+          }
+        if (message.file != "") {
+          $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
+        }
+        scrollToBottom();
       }
     })
 }
-function scrollToBottom() {
-  messages.scrollTop = messages.scrollHeight;
-}
+
     function load_messages() {
         fetch("{% url 'chatroom-ajax' other_user.id %}")
             .then(e => e.json())
@@ -900,7 +887,7 @@ function scrollToBottom() {
                     console.log(message)
                 }
             })
-            scrollToBottom();
+            
     }
     function construct_message(message){
       if (message.message != "") {
@@ -909,6 +896,7 @@ function scrollToBottom() {
       if (message.file != "") {
         $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
       }
+      scrollToBottom();
 
     }
     setInterval(load_messages, 2000);
@@ -923,7 +911,12 @@ $(window).on('keydown', function(e) {
     return false;
   }
 });
+});
+function scrollToBottom() {
+  messages.scrollTop = messages.scrollHeight;
+}
 //# sourceURL=pen.js
+
 </script>
 <script>
   $(document).ready(function(){
@@ -985,5 +978,39 @@ function cancelAttachment() {
     $('.send-message').find('.attachment-preview').remove();
     $('.upload').replaceWith($('.upload').val(''));
 }
+</script>
+<script>
+  $('.item').click(function() {
+    var item_id = $(this).data('item-id');
+    var a = parseInt(item_id);
+    var token = '{{csrf_token}}';
+    alert("Do you want to delete this message");
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'messageDelete' %}",
+      'type': 'POST',
+      'data': {"id":a},
+      'success': function ( message_list ) {
+        document.location.reload();
+      }
+    })
+  });
+  $('.mes-img').click(function() {
+    var item_id = $(this).data('item-id');
+    var a = parseInt(item_id);
+    var token = '{{csrf_token}}';
+    alert("Do you want to delete this message");
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'messageDelete' %}",
+      'type': 'POST',
+      'data': {"id":a},
+      'success': function ( message_list ) {
+        document.location.reload();
+      }
+    })
+  });
 </script>
 </body></html>

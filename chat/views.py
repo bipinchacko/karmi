@@ -6,6 +6,7 @@ from django.db.models import Q
 import json
 from django.shortcuts import get_object_or_404
 from django.core import serializers
+from django.http import HttpResponse
 
 
 # Create your views here.
@@ -49,7 +50,6 @@ def ajax_load_messages(request,pk):
             } ]
         print(message_list)
         messages.update(seen=True)
-    # print(message_list)
     if request.method == "POST":
         a = request.POST.get('message')
         b = request.FILES.get('upload')
@@ -57,10 +57,31 @@ def ajax_load_messages(request,pk):
             print("null")
         else:
             m = Message.objects.create(receiver=other_user, sender=request.user, message=a, files=b)
-            message_list.append({
-                "sender": request.user.id,
-                "message": m.message,
-                "sent": True,
-                "file":m.files.name,
-            })
+            if m.files == None:
+                message_list.append({
+                    "sender": request.user.id,
+                    "message": m.message,
+                    "sent": True,
+                    "file":''
+                })
+            else:
+                message_list.append({
+                    "sender": request.user.id,
+                    "message": m.message,
+                    "sent": True,
+                    "file":m.files.url
+                })
     return JsonResponse(message_list, safe=False)
+def messageDelete(request):
+    a = request.POST.get('id')
+    d = Message.objects.get(pk=a)
+    d.delete()
+    return HttpResponse('')
+# @login_required
+# def switchUser(request):
+#     print("hloooo")
+#     current_user = request.user
+#     connecteduser = CustomUser.objects.all()
+#     last_seen = cache.get('seen_%s' % connecteduser)
+#     print(last_seen)
+#     return HttpResponse('')
