@@ -15,3 +15,19 @@ class Message(models.Model):
 
     class Meta:
         ordering = ("date_created",)
+class Group(models.Model):
+    name = models.CharField(max_length=60)
+    icon = models.ImageField(upload_to='groupicon')
+    date_created = models.DateTimeField(auto_now_add=True)
+class GroupMembers(models.Model):
+    group = models.ForeignKey(Group,on_delete = models.CASCADE,)
+    member = models.ForeignKey(CustomUser,on_delete = models.CASCADE,)
+    admin = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+class GroupMessage(models.Model):
+    group = models.ForeignKey(Group,on_delete = models.CASCADE,)
+    member = models.ForeignKey(CustomUser,on_delete = models.CASCADE,)
+    chat = models.CharField(max_length=50000)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+
