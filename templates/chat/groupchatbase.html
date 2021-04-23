@@ -882,12 +882,15 @@
               <P>{{i.first_name}}</P>
               <p>{{i.email}}</p><br>
             </div>
+            <div>
+              <input type="radio" class="flavour" id="radioNoLabel1" value="{{i.id}}" aria-label="...">
+            </div>
           </div>
         {% endfor %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Create</button>
+        <button type="button" class="btn btn-primary membersubmit">Next</button>
       </div>
     </div>
   </div>
@@ -897,4 +900,68 @@
     $('#exampleModalLong').modal('show');
   });
 </script>
-</body></html>
+<!-- Modal -->
+<div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="groupform" name="groupform" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Create New Group</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Group name</label>
+              <input type="text" class="text-right" id="groupname" name="groupname">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlFile1">Add Group Icon</label><br>
+              <input type="file" class="form-control-file" id="groupicon" name="groupicon">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary creategroup">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  $(".membersubmit").on("click", function(e){
+    e.preventDefault();
+    $('#exampleModalLong').modal('hide');
+    $('#example').modal('show');
+  });
+  $(".creategroup").on("click", function(e){
+    e.preventDefault();
+    $('#example').modal('hide');
+    var members = $(".membersubmit:checked").val();
+    toppings = $(".flavour:checked").map(function () {
+        return $(this).val();
+      }).get().join();
+    var groupdata = document.forms.namedItem("groupform");
+    oData = new FormData(groupdata);
+    oData.append("members",toppings );
+    var token = '{{csrf_token}}';
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'createGroup' %}",
+      'type': 'POST',
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
+      'data': oData,
+      'success': function () {
+        $("#groupform").trigger('reset');
+        $( ".flavour" ).prop('checked',false);
+        alert("Group Created Successfully");
+      }
+    })
+  });
+</script>
+</body>
+</html>

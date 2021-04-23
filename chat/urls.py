@@ -6,6 +6,7 @@ urlpatterns = [
     path("ajax/<int:pk>/", views.ajax_load_messages, name="chatroom-ajax"),
     path("messageDelete/", views.messageDelete, name="messageDelete"),
     # path("switchUser/", views.switchUser, name="switchUser"),
+    path("createGroup/", views.createGroup, name="createGroup"),
     path("groupchatroom/<int:pk>", views.groupchatroom, name = "groupchatroom"),
     path("groupchatroom_base/", views.groupchatroom_base, name = "groupchatroom_base"),
     path("ajax_load_messages_group/<int:pk>/", views.ajax_load_messages_group, name="ajax_load_messages_group"),

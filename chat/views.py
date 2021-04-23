@@ -86,6 +86,26 @@ def messageDelete(request):
 #     print(last_seen)
 #     return HttpResponse('')
 # Group chat.
+def createGroup(request):
+    if request.method == "POST":
+        group = Group()
+        group.name = request.POST.get('groupname')
+        group.icon = request.FILES.get('groupicon')
+        group.save()
+        groupmembers = GroupMembers()
+        c = request.POST.get('members')
+        arr = c.split(',')
+        for i in arr:
+            groupmembers.group = group
+            d = int(i)
+            groupmembers.member = d
+            groupmembers.admin = "member"
+            groupmembers.save()
+        groupmembers.group = group
+        groupmembers.member = request.user.id
+        groupmembers.admin = "Admin"
+        groupmembers.save()
+    return HttpResponse('')
 @login_required
 def groupchatroom(request,pk:int):
     current_user = request.user.id
