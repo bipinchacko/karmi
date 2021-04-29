@@ -16,6 +16,7 @@
 <script src="https://use.typekit.net/hoy3lrg.js"></script>
 <script>try{Typekit.load({ async: true });}catch(e){}</script>
 <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'><link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+<meta charset = "UTF-8" />
 <style class="cp-pen-styles">
   body {
   display: flex;
@@ -53,7 +54,7 @@
   max-width: 340px;
   width: 40%;
   height: 100%;
-  background: #2c3e50;
+  background: linear-gradient(#024785, #370f82);
   color: #f5f5f5;
   overflow: hidden;
   position: relative;
@@ -324,7 +325,7 @@
   padding: 10px 0 10px 46px;
   width: calc(100% - 25px);
   border: none;
-  background: #32465a;
+  background: #024785;
   color: #f5f5f5;
 }
 #frame #sidepanel #search input:focus {
@@ -696,7 +697,7 @@
   outline: none;
 }
 .chatnav{
-  background: #2c3e50;
+  background: linear-gradient(#024785, #370f82);
   
 }
 .chatnav a{
@@ -776,12 +777,12 @@
           <a class="navbar-brand " href="#" style="color: white;">Kaarmy</a>
         </div>
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Chat</a></li>
+          <li class="active"><a href="{% url 'chatroom_base' %}">Chat</a></li>
           <li><a href="#">Group Chat</a></li>
           <li><a href="#">Personal Chat</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
         </ul>
       </div>
     </nav>
@@ -806,15 +807,17 @@
               </div>
             </div>
 				</li>
-        {% for i in connecteduser %}
+        {% for i in group %}
 				<li class="contact" id="{{i.id}}">
-          <a href="{% url 'chatroom' i.id %}" style="color: #E6EAEA;">
+          <a href="{% url 'groupchatroom' i.id %}" style="color: #E6EAEA;">
             <div class="wrap">
-              <span class="contact-status online" ></span>
-              <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+              <!-- <span class="contact-status online" ></span> -->
+              {% if i.icon %}
+                <img src="{{i.icon.url}}" alt="" />
+              {% endif %}
               <div class="meta">
-                <p class="name">{{i.first_name}}</p>
-                <p class="preview">{{i.email}}</p>
+                <p class="name">{{i.name}}</p>
+                <!-- <p class="preview">{{i.email}}</p> -->
               </div>
             </div>
           </a>
@@ -882,12 +885,15 @@
               <P>{{i.first_name}}</P>
               <p>{{i.email}}</p><br>
             </div>
+            
+              <input type="checkbox" class="flavour" id="radioNoLabel1" value="{{i.id}}" style="float: right; margin-right: 2em;">
+            
           </div>
         {% endfor %}
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Create</button>
+        <button type="button" class="btn btn-primary membersubmit">Next</button>
       </div>
     </div>
   </div>
@@ -897,4 +903,78 @@
     $('#exampleModalLong').modal('show');
   });
 </script>
-</body></html>
+<!-- Modal -->
+<div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="groupform" name="groupform" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Create New Group</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Group name</label>
+              <input type="text" class="text-right" id="groupname" name="groupname" required/>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlFile1">Add Group Icon</label><br>
+              <input type="file" class="form-control-file" id="groupicon" name="groupicon" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary creategroup">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  $(".membersubmit").on("click", function(e){
+    e.preventDefault();
+
+    var members = $(".membersubmit:checked").val();
+    toppings = $(".flavour:checked").map(function () {
+        return $(this).val();
+      }).get().join();
+    if (toppings.length <= 0) {
+      alert("select atleast one person")
+    }else{
+    $('#exampleModalLong').modal('hide');
+    $('#example').modal('show');
+  }
+  });
+  $("#groupform").on("submit", function(e){
+    e.preventDefault();
+    $('#example').modal('hide');
+    var members = $(".membersubmit:checked").val();
+    toppings = $(".flavour:checked").map(function () {
+        return $(this).val();
+      }).get().join();
+    var groupdata = document.forms.namedItem("groupform");
+    oData = new FormData(groupdata);
+    oData.append("members",toppings );
+    var token = '{{csrf_token}}';
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'createGroup' %}",
+      'type': 'POST',
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
+      'data': oData,
+      'success': function () {
+        $("#groupform").trigger('reset');
+        $( ".flavour" ).prop('checked',false);
+        alert("Group Created Successfully");
+        document.location.reload();
+      }
+    })
+  });
+</script>
+</body>
+</html>

@@ -53,7 +53,7 @@
   max-width: 340px;
   width: 40%;
   height: 100%;
-  background: #2c3e50;
+  background: linear-gradient(#024785, #370f82);
   color: #f5f5f5;
   overflow: hidden;
   position: relative;
@@ -324,7 +324,7 @@
   padding: 10px 0 10px 46px;
   width: calc(100% - 25px);
   border: none;
-  background: #32465a;
+  background: #024785;
   color: #f5f5f5;
 }
 #frame #sidepanel #search input:focus {
@@ -594,8 +594,12 @@
   float: right;
 }
 #frame .content .messages ul li.sent p {
+  margin: 10px 0px 0px 0px;
   background: #435f7a;
   color: #f5f5f5;
+  float: right;
+}
+#frame .content .messages ul li.sent h6 {
   float: right;
 }
 #frame .content .messages ul li.replies img {
@@ -696,7 +700,7 @@
   outline: none;
 }
 .chatnav{
-  background: #2c3e50;
+  background: linear-gradient(#024785, #370f82);
   
 }
 .chatnav a{
@@ -748,6 +752,29 @@
   border-radius: 37px !important;
   width: 183px !important;
 }
+.addgroup{
+  margin: 14px 0px 6px 55px;
+  font-size: 22px;
+}
+.addgroup i{
+  padding: 0px 0px 0px 8px;
+}
+#add-grp-member{
+  width: 51px;
+  border-radius: 50px;
+}
+.aaaa div{
+  display: inline-block;
+}
+.grp-deialis{
+  margin: 10px 24px 2px 17px;
+}
+#grpmoreicon{
+  font-size: 24px;
+  float: right;
+  margin-right: 1rem;
+  margin-top: 1rem;
+}
 </style>
 </head>
 <body>
@@ -759,12 +786,12 @@
           <a class="navbar-brand " href="#" style="color: white;">Kaarmy</a>
         </div>
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">Chat</a></li>
-          <li><a href="#">Group Chat</a></li>
+          <li class="active"><a href="{% url 'chatroom_base' %}">Chat</a></li>
+          <li><a href="{% url 'groupchatroom_base' %}">Group Chat</a></li>
           <li><a href="#">Personal Chat</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#"><span class="glyphicon glyphicon-arrow-left"></span></a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-home"></span></a></li>
         </ul>
       </div>
     </nav>
@@ -782,15 +809,22 @@
 		</div>
 		<div id="contacts">
 			<ul id="so">
-        {% for i in connecteduser %}
+        <li class="contact">
+          <div class="wrap">
+            <div class="addgroup">
+              <p class="name">Create Group<i class="fa fa-plus-circle" aria-hidden="true"></i></p>
+            </div>
+          </div>
+        </li>
+        {% for i in group %}
 				<li class="contact" id="{{i.id}}">
-          <a href="{% url 'chatroom' i.id %}" style="color: #E6EAEA;">
+          <a href="{% url 'groupchatroom' i.id %}" style="color: #E6EAEA;">
             <div class="wrap">
-              <span class="contact-status online" ></span>
-              <img src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+              <!-- <span class="contact-status online" ></span> -->
+              <img src="{{i.icon.url}}" alt="" />
               <div class="meta">
-                <p class="name">{{i.first_name}}</p>
-                <p class="preview">{{i.email}}</p>
+                <p class="name">{{i.name}}</p>
+                <!-- <p class="preview">{{i.email}}</p> -->
               </div>
             </div>
           </a>
@@ -803,8 +837,9 @@
 	</div>
 	<div class="content">
 		<div class="contact-profile">
-			<img src="http://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-			<p>{{ other_user.first_name }}</p>
+			<img src="{{current_group.icon.url}}" alt="" />
+			<p>{{ current_group.name }}</p>
+      <i class="fa fa-ellipsis-v" id="grpmoreicon"></i>
 			<div class="social-media">
 			</div>
 		</div>
@@ -812,13 +847,16 @@
 			<ul>
         {% for message in messages %}
 				<li class=" 
-        <!-- {% if message.sender == request.user %}sent{% else %}replies{% endif %} -->
+        {% if message.member == request.user %}sent{% else %}replies{% endif %}
         ">
-					<img src="http://emilcarlsson.se/assets/mikeross.png" alt="" />
-          {% if message.message != '' %}
-					  <p class="item" data-item-id="{{ message.id }}">{{ message.message }}</p>
+					<!-- <img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /> -->
+          
+          {% if message.chat != '' %}
+            <h6>{{message.member.first_name}}</h6>
+					  <p class="item" data-item-id="{{ message.id }}">{{ message.chat }}</p>
           {% endif %}
           {% if message.files %}
+          <h6>{{message.member.first_name}}</h6>
             <img data-item-id="{{ message.id }}" src="{{message.files.url}}" class="mes-img" alt="">
           {% endif %}
 				</li>
@@ -838,6 +876,280 @@
 		</div>
 	</div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Create New Group</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for i in connecteduser %}
+          <div class="aaaa" style="margin: 0px 0px 0px 17px;">
+            <div>
+              <img id="add-grp-member" src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+            </div>
+            <div class="grp-deialis">
+              <P>{{i.first_name}}</P>
+              <p>{{i.email}}</p><br>
+            </div>
+              <input type="checkbox" class="flavour" id="radioNoLabel1" value="{{i.id}}" style="float: right; margin-right: 2em;">
+          </div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary membersubmit">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(".addgroup").on("click", function(){
+    $('#exampleModalLong').modal('show');
+  });
+</script>
+<!-- Modal -->
+<div class="modal fade" id="example" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="groupform" name="groupform" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Create New Group</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Group name</label>
+              <input type="text" class="text-right" id="groupname" name="groupname" required/>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlFile1">Add Group Icon</label><br>
+              <input type="file" class="form-control-file" id="groupicon" name="groupicon" required>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary creategroup">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  $(".membersubmit").on("click", function(e){
+    e.preventDefault();
+
+    var members = $(".membersubmit:checked").val();
+    toppings = $(".flavour:checked").map(function () {
+        return $(this).val();
+      }).get().join();
+    if (toppings.length <= 0) {
+      alert("select atleast one person")
+    }else{
+    $('#exampleModalLong').modal('hide');
+    $('#example').modal('show');
+  }
+  });
+  $("#groupform").on("submit", function(e){
+    e.preventDefault();
+    $('#example').modal('hide');
+    var members = $(".membersubmit:checked").val();
+    toppings = $(".flavour:checked").map(function () {
+        return $(this).val();
+      }).get().join();
+    var groupdata = document.forms.namedItem("groupform");
+    oData = new FormData(groupdata);
+    oData.append("members",toppings );
+    var token = '{{csrf_token}}';
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'createGroup' %}",
+      'type': 'POST',
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
+      'data': oData,
+      'success': function () {
+        $("#groupform").trigger('reset');
+        $( ".flavour" ).prop('checked',false);
+        alert("Group Created Successfully");
+        document.location.reload();
+      }
+    })
+  });
+</script>
+<div class="modal fade" id="options" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Group Options</h4>
+        </div>
+        <div class="modal-body">
+          <p id="editmembersbtn">Edit info</p><br>
+          <p id="editgroupbtn">Add members</p><br>
+          <p id="exitgroupbtn">Exit Group</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    $("#grpmoreicon").on("click", function(){
+      $('#options').modal('show');
+    });
+  </script>
+<div class="modal fade" id="editmembers" role="dialog">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <form id="groupupdate" name="groupupdate" enctype="multipart/form-data">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Edit members</h4>
+        </div>
+        <div class="modal-body">
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Group name</label>
+              <input type="text" class="text-right" id="groupname" name="groupname" placeholder="{{ current_group.name }}">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlFile1">Add Group Icon</label><br>
+              <input type="file" class="form-control-file" id="groupicon" name="groupicon" placeholder="{{current_group.icon.url}}">
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+        </div>
+    </form>
+    </div>
+  </div>
+</div>
+<script>
+  $("#editmembersbtn").on("click", function(e){
+    e.preventDefault();
+    $('#options').modal('hide');
+    $('#editmembers').modal('show');
+    $("#groupupdate").on("submit", function(e){
+    var groupdata = document.forms.namedItem("groupupdate");
+    oData = new FormData(groupdata);
+    var token = '{{csrf_token}}';
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'updateGroupinfo' group_id %}",
+      'type': 'POST',
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
+      'data': oData,
+      'success': function () {
+        $('#editmembers').modal('hide');
+        $("#groupupdate").trigger('reset');
+        alert("Group Updated Successfully");
+        document.location.reload();
+      }
+    })
+  })
+  });
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="updatemember" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Update group members</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for i in updatelist %}
+          <div class="aaaa" style="margin: 0px 0px 0px 17px;">
+            <div>
+              <img id="add-grp-member" src="http://emilcarlsson.se/assets/louislitt.png" alt="" />
+            </div>
+            <div class="grp-deialis">
+              <P>{{i.first_name}}</P>
+              <p>{{i.email}}</p><br>
+            </div>
+              <input type="checkbox" class="flavour" id="radioNoLabel1" value="{{i.id}}" style="float: right; margin-right: 2em;">
+          </div>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary memberupdate">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $("#editgroupbtn").on("click", function(){
+    $('#updatemember').modal('show');
+  });
+  $(".memberupdate").on("click", function(e){
+    e.preventDefault();
+
+    var members = $(".memberupdate:checked").val();
+    toppings = $(".flavour:checked").map(function () {
+        return $(this).val();
+      }).get().join();
+    var token = '{{csrf_token}}';
+    oData = new FormData();
+    oData.append("members",toppings );
+    $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'updateGroupMembers' group_id %}",
+      'type': 'POST',
+      processData: false,
+      contentType: false,
+      enctype: 'multipart/form-data',
+      'data': oData,
+      'success': function () {
+        $('#options').modal('hide');
+        $('#updatemember').modal('hide');
+        $( ".flavour" ).prop('checked',false);
+        alert("Group Created Successfully");
+      }
+    })
+  });
+</script>
+<script>
+  $("#exitgroupbtn").on("click", function(){
+    var r = confirm("Do you want to exit this group");
+    var token = '{{csrf_token}}';
+    url = "{%  url 'groupchatroom_base' %}";
+    if (r==true){
+      $.ajax(
+    {
+      headers: { "X-CSRFToken": token },
+      'url': "{% url 'exitgroup' group_id %}",
+      'type': 'POST',
+      'success': function () {
+      // document.location.reload({%  url 'groupchatroom_base' %});
+      window.location = url
+      }
+    })
+    }
+    else{
+      return false
+    }
+    });
+</script>
 <script >
 $( document ).ready(function() {
   scrollToBottom();
@@ -854,7 +1166,7 @@ function newMessage() {
   $.ajax(
     {
       headers: { "X-CSRFToken": token },
-      'url': "{% url 'chatroom-ajax' other_user.id %}",
+      'url': "{% url 'ajax_load_messages_group' group_id %}",
       'type': 'POST',
       processData: false,
       contentType: false,
@@ -868,10 +1180,10 @@ function newMessage() {
         }
         $('.send-message').find('.attachment-preview').remove();
         if (message.message != "") {
-          $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
+          $('<li class="sent"><h6>'+ message.mName +'</h6><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
           }
         if (message.file != "") {
-          $('<li class="sent"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
+          $('<li class="sent"><h6>'+ message.mName +'</h6><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
         }
         scrollToBottom();
       }
@@ -879,7 +1191,7 @@ function newMessage() {
 }
 
     function load_messages() {
-        fetch("{% url 'chatroom-ajax' other_user.id %}")
+        fetch("{% url 'ajax_load_messages_group' group_id %}")
             .then(e => e.json())
             .then(message_list => {
                 for (message of message_list) {
@@ -890,11 +1202,14 @@ function newMessage() {
             
     }
     function construct_message(message){
-      if (message.message != "") {
-        $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
-      }
-      if (message.file != "") {
-        $('<li class="replies"><img src="http://emilcarlsson.se/assets/mikeross.png" alt="" /><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
+      var userid = '{{request.user.id}}';
+      if(message.sender!=userid){
+        if (message.message != "") {
+          $('<li class="replies"><h6>'+ message.mName +'</h6><p>' + message.message + '</p></li>').appendTo($('.messages ul'));
+        }
+        if (message.file != "") {
+          $('<li class="replies"><h6>'+ message.mName +'</h6><img class="mes-img" src="' + message.file + '"></li>').appendTo($('.messages ul'));
+        }
       }
       scrollToBottom();
 
